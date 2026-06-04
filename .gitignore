@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# dependencies
+node_modules/
+
+# env files
+.env
+
+# certificates & keys
+*.crt
+*.key
+
+# Playwright reports
+playwright-report/
+reports/
+test-results/
+# auth session
+.auth/
+
+# runtime logs
+logs/
+
+# generated data cache
+testdata/*.json
+
+# generated config cache
+config/settings.json

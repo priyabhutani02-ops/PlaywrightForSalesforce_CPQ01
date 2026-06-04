@@ -1,0 +1,36 @@
+{
+  "name": "playwright-salesforce-cpq",
+  "version": "1.0.0",
+  "description": "Playwright automation framework for Salesforce CPQ (Quote/Order/Contract/Amendment flows)",
+  "main": "index.js",
+  "scripts": {
+    "data": "node testdata/generate-testdata.js && node testdata/excel-to-json.js",
+    "config": "node config/generate-config.js && node config/config-to-json.js",
+    "pretest": "node config/config-to-json.js && node testdata/excel-to-json.js",
+    "test": "npx playwright test",
+    "test:headed": "HEADLESS=false SLOWMO=600 npx playwright test",
+    "test:amendment": "npx playwright test tests/cpq/amendment-flow.spec.js",
+    "test:parallel": "HEADLESS=true WORKERS=8 npx playwright test",
+    "report": "npx playwright show-report reports/html-report",
+    "verify:fields": "node tools/verify-fields.js"
+  },
+  "keywords": [
+    "playwright",
+    "salesforce",
+    "cpq",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.60.0"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^10.2.0",
+    "axios": "^1.16.0",
+    "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
+    "jsonwebtoken": "^9.0.3",
+    "winston": "^3.19.0"
+  }
+}

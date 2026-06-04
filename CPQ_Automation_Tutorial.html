@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Salesforce CPQ Test Automation — Project Handbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f5f1e8;
+    --paper-2:#fffdf7;
+    --ink:#1b1a16;
+    --muted:#6c6456;
+    --line:#e4ddcd;
+    --teal:#0c6b5d;
+    --teal-deep:#084b41;
+    --clay:#bb6336;
+    --code-bg:#15201d;
+    --code-ink:#e8e4d6;
+    --code-teal:#6fd8c2;
+    --code-clay:#e29a6c;
+    --maxw:880px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Public Sans',sans-serif;
+    font-size:17px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* subtle paper grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:radial-gradient(rgba(120,110,90,.05) 1px,transparent 1px);
+    background-size:4px 4px;
+  }
+  .wrap{position:relative;z-index:1;max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+  /* ── COVER ───────────────────────────────────────────── */
+  .cover{
+    min-height:92vh;display:flex;flex-direction:column;justify-content:center;
+    padding:60px 0 50px;border-bottom:2px solid var(--ink);
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--teal);margin-bottom:26px;
+  }
+  .cover h1{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(38px,7vw,72px);
+    line-height:1.02;letter-spacing:-.015em;margin:0 0 24px;
+  }
+  .cover h1 em{font-style:italic;color:var(--teal-deep)}
+  .lede{font-size:clamp(18px,2.4vw,22px);color:var(--muted);max-width:640px;margin:0 0 40px}
+  .meta{
+    display:flex;flex-wrap:wrap;gap:28px;padding-top:26px;border-top:1px solid var(--line);
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted);
+  }
+  .meta b{display:block;color:var(--ink);font-family:'Public Sans';font-weight:600;font-size:14px;margin-top:3px}
+
+  /* reveal animation */
+  .reveal{opacity:0;transform:translateY(14px);animation:rise .7s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .d1{animation-delay:.05s}.d2{animation-delay:.15s}.d3{animation-delay:.27s}.d4{animation-delay:.4s}.d5{animation-delay:.55s}
+
+  /* ── SECTIONS ────────────────────────────────────────── */
+  section{padding:66px 0;border-bottom:1px solid var(--line)}
+  .sec-num{
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.2em;
+    color:var(--clay);text-transform:uppercase;
+  }
+  h2{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(27px,4vw,40px);
+    letter-spacing:-.01em;line-height:1.1;margin:.35em 0 .7em;
+  }
+  h3{font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:2em 0 .5em;letter-spacing:-.01em}
+  h4{font-size:14px;font-family:'JetBrains Mono',monospace;letter-spacing:.05em;text-transform:uppercase;color:var(--teal-deep);margin:1.6em 0 .4em}
+  p{margin:0 0 1.1em}
+  a{color:var(--teal);text-decoration:none;border-bottom:1px solid var(--line)}
+  strong{font-weight:600}
+  .muted{color:var(--muted)}
+
+  ul,ol{margin:0 0 1.2em;padding-left:1.3em}
+  li{margin:.42em 0}
+  li::marker{color:var(--teal)}
+
+  /* callout */
+  .note{
+    background:var(--paper-2);border:1px solid var(--line);border-left:3px solid var(--teal);
+    padding:18px 22px;border-radius:0 10px 10px 0;margin:1.6em 0;font-size:15.5px;
+  }
+  .note.warn{border-left-color:var(--clay)}
+  .note .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:6px}
+  .note.warn .tag{color:var(--clay)}
+
+  /* code */
+  pre{
+    background:var(--code-bg);color:var(--code-ink);border-radius:12px;
+    padding:20px 22px;overflow-x:auto;font-family:'JetBrains Mono',monospace;
+    font-size:13.5px;line-height:1.7;margin:1.4em 0;box-shadow:0 18px 40px -24px rgba(8,40,35,.6);
+  }
+  pre .c{color:#7e8a82}/*comment*/
+  pre .k{color:var(--code-teal)}
+  pre .s{color:var(--code-clay)}
+  code{font-family:'JetBrains Mono',monospace;font-size:.88em;background:#ece5d6;padding:1.5px 6px;border-radius:5px;color:var(--teal-deep)}
+  pre code{background:none;padding:0;color:inherit}
+
+  /* tables */
+  table{width:100%;border-collapse:collapse;margin:1.5em 0;font-size:14.5px}
+  th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-deep);background:var(--paper-2)}
+  tr:hover td{background:rgba(12,107,93,.035)}
+
+  /* cards grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:1.6em 0}
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+  .card .n{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--clay);letter-spacing:.1em}
+  .card h4{margin:.5em 0 .4em;color:var(--ink);font-family:'Fraunces';font-size:18px;text-transform:none;letter-spacing:0}
+  .card p{font-size:14.5px;color:var(--muted);margin:0}
+
+  /* architecture diagram */
+  .arch{margin:1.8em 0;display:flex;flex-direction:column;gap:10px}
+  .layer{
+    background:var(--paper-2);border:1px solid var(--line);border-radius:11px;
+    padding:15px 20px;position:relative;
+  }
+  .layer .lname{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:8px}
+  .layer .lbody{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:6px 12px;font-size:13.5px;font-weight:500}
+  .pill.hi{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .arrow{align-self:center;color:var(--muted);font-size:18px;line-height:1}
+  .sf{background:linear-gradient(135deg,var(--teal-deep),var(--teal));color:#fff;border:none}
+  .sf .lname{color:rgba(255,255,255,.7)}
+  .sf .pill{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.25);color:#fff}
+
+  /* stepper */
+  .steps{counter-reset:s;margin:1.8em 0;border-left:2px solid var(--line);padding-left:0}
+  .step{position:relative;padding:0 0 26px 52px;counter-increment:s}
+  .step:last-child{padding-bottom:0}
+  .step::before{
+    content:counter(s);position:absolute;left:-17px;top:-2px;width:32px;height:32px;
+    background:var(--teal);color:#fff;border-radius:50%;display:grid;place-items:center;
+    font-family:'JetBrains Mono';font-size:14px;font-weight:500;box-shadow:0 0 0 5px var(--paper);
+  }
+  .step .st{font-weight:600;font-size:16px;display:block;margin-bottom:2px}
+  .step .sd{color:var(--muted);font-size:14.5px}
+  .step .mode{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle}
+  .mode.api{background:#e3efe9;color:var(--teal-deep)}
+  .mode.ui{background:#f4e6da;color:var(--clay)}
+
+  /* TOC */
+  nav.toc{
+    position:fixed;top:0;left:0;height:100vh;width:240px;padding:40px 24px;
+    border-right:1px solid var(--line);overflow-y:auto;background:var(--paper);
+    font-size:13.5px;display:none;
+  }
+  nav.toc .tt{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--clay);margin-bottom:18px}
+  nav.toc a{display:block;color:var(--muted);border:none;padding:5px 0;line-height:1.4}
+  nav.toc a:hover{color:var(--teal)}
+  nav.toc a .num{font-family:'JetBrains Mono';color:var(--line);margin-right:8px}
+
+  footer{padding:46px 0 70px;text-align:center;color:var(--muted);font-size:13.5px}
+  footer .fline{font-family:'Fraunces';font-size:18px;color:var(--ink);font-style:italic;margin-bottom:10px}
+
+  @media(min-width:1180px){
+    nav.toc{display:block}
+    .wrap{margin-left:max(calc(50% - 440px),260px)}
+  }
+  @media print{
+    nav.toc{display:none}
+    body{background:#fff;font-size:12pt}
+    body::before{display:none}
+    section{break-inside:avoid;padding:24px 0}
+    pre{box-shadow:none}
+    .cover{min-height:auto}
+    .reveal{opacity:1;transform:none;animation:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <div class="tt">Contents</div>
+  <a href="#overview"><span class="num">01</span>Overview</a>
+  <a href="#why"><span class="num">02</span>Why It Matters</a>
+  <a href="#cpq"><span class="num">03</span>What Is CPQ</a>
+  <a href="#scope"><span class="num">04</span>What We Test</a>
+  <a href="#arch"><span class="num">05</span>How It Works</a>
+  <a href="#amendment"><span class="num">06</span>Amendment Walkthrough</a>
+  <a href="#capabilities"><span class="num">07</span>Capabilities</a>
+  <a href="#run"><span class="num">08</span>Running It</a>
+  <a href="#reports"><span class="num">09</span>Reports & Logs</a>
+  <a href="#quality"><span class="num">10</span>Quality & Scaling</a>
+  <a href="#glossary"><span class="num">11</span>Glossary</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- COVER -->
+  <header class="cover">
+    <div class="eyebrow reveal d1">Project Handbook &nbsp;·&nbsp; QA Automation</div>
+    <h1 class="reveal d2">Salesforce CPQ,<br>tested <em>end&#8209;to&#8209;end</em>,<br>automatically.</h1>
+    <p class="lede reveal d3">A Playwright automation framework that recreates the full Quote&nbsp;→&nbsp;Order&nbsp;→&nbsp;Contract&nbsp;→&nbsp;Amendment journey in Salesforce CPQ — and verifies every step on its own, the way a careful human tester would, only faster and without fatigue.</p>
+    <div class="meta reveal d4">
+      <div>Platform<b>Salesforce CPQ</b></div>
+      <div>Tooling<b>Playwright · Node.js</b></div>
+      <div>Approach<b>Hybrid API + UI</b></div>
+      <div>Audience<b>Client &amp; Delivery Team</b></div>
+    </div>
+  </header>
+
+  <!-- 01 OVERVIEW -->
+  <section id="overview">
+    <span class="sec-num">01 — Overview</span>
+    <h2>What this project is, in one paragraph</h2>
+    <p>This is an automated testing framework for a <strong>Salesforce CPQ</strong> implementation. CPQ ("Configure, Price, Quote") is the part of Salesforce that turns a sales conversation into a priced quote, then into an order, then into a signed contract — and later lets you <em>amend</em> that contract when the customer changes what they bought. Each of those steps involves many screens, calculations, and approvals. Testing them by hand before every release is slow and easy to get wrong.</p>
+    <p>Our framework performs those journeys automatically. It logs into Salesforce, creates real test records, drives the CPQ screens, makes the same changes a salesperson would, and then <strong>checks that Salesforce actually did the right thing</strong> — correct quantities, correct dates, correct documents created. It produces a clean report at the end so anyone can see, at a glance, what passed and what didn't.</p>
+    <div class="note">
+      <span class="tag">In plain terms</span>
+      Think of it as a tireless QA engineer who can run the entire sales-to-contract process hundreds of times overnight, and hand you a tidy report in the morning.
+    </div>
+  </section>
+
+  <!-- 02 WHY -->
+  <section id="why">
+    <span class="sec-num">02 — The Value</span>
+    <h2>Why automate this at all</h2>
+    <p>CPQ is high-stakes. A pricing or contract error doesn't just fail a test — it can ship a wrong quote to a real customer. Manual regression testing of CPQ is expensive and inconsistent. Automation changes the economics:</p>
+    <div class="grid">
+      <div class="card"><div class="n">01</div><h4>Speed</h4><p>A full amendment journey that takes a person 15–20 minutes runs unattended, many in parallel.</p></div>
+      <div class="card"><div class="n">02</div><h4>Confidence</h4><p>Every run verifies the actual data in Salesforce, not just that screens "looked fine".</p></div>
+      <div class="card"><div class="n">03</div><h4>Repeatability</h4><p>The same checks run identically every time — no skipped steps, no human variance.</p></div>
+      <div class="card"><div class="n">04</div><h4>Coverage</h4><p>Test data lives in a spreadsheet, so adding new scenarios is a new row, not new code.</p></div>
+      <div class="card"><div class="n">05</div><h4>Evidence</h4><p>Screenshots, videos, logs and an HTML report give an audit trail for every run.</p></div>
+      <div class="card"><div class="n">06</div><h4>Lower cost</h4><p>QA effort shifts from repetitive clicking to reviewing results and edge cases.</p></div>
+    </div>
+  </section>
+
+  <!-- 03 CPQ -->
+  <section id="cpq">
+    <span class="sec-num">03 — Background</span>
+    <h2>The business process we are testing</h2>
+    <p>To understand the tests, it helps to know the journey a deal takes inside Salesforce CPQ. Each arrow below is a real transition the framework drives and verifies.</p>
+    <div class="arch">
+      <div class="layer"><div class="lname">1 · Quote</div><div class="lbody"><span class="pill">Account</span><span class="pill">Contact</span><span class="pill">Opportunity</span><span class="pill hi">Quote + Products + Discount</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><div class="lname">2 · Order</div><div class="lbody"><span class="pill">Opportunity Closed-Won</span><span class="pill hi">Order created &amp; activated</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><div class="lname">3 · Contract</div><div class="lbody"><span class="pill hi">Contract generated from Order</span></div></div>
+      <div class="arrow">↓</div>
+      <div class="layer"><div class="lname">4 · Amendment</div><div class="lbody"><span class="pill">Amend Contract</span><span class="pill hi">New Amendment Quote</span><span class="pill">Change quantity / dates</span><span class="pill hi">Amended Order &amp; Contract</span></div></div>
+    </div>
+    <p class="muted">A glossary of these terms is at the end of this handbook for non-technical readers.</p>
+  </section>
+
+  <!-- 04 SCOPE -->
+  <section id="scope">
+    <span class="sec-num">04 — Scope</span>
+    <h2>What the framework currently tests</h2>
+    <p>Four end-to-end journeys are automated, each as its own test scenario:</p>
+    <table>
+      <thead><tr><th>Scenario</th><th>What it proves</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Quote without approval</strong></td><td>A standard deal with a discount inside policy flows cleanly from quote to order to contract.</td></tr>
+        <tr><td><strong>Quote with approval</strong></td><td>A higher discount correctly triggers the approval process, and the deal proceeds only once approved.</td></tr>
+        <tr><td><strong>Bundle product</strong></td><td>A configurable bundle (e.g. a laptop with CPU, RAM and storage options) is built and priced correctly.</td></tr>
+        <tr><td><strong>Amendment (showcase)</strong></td><td>An existing contract is amended — quantity and start date changed — producing a correct new order and contract.</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <span class="tag">Designed to grow</span>
+      New scenarios don't require a developer for every case. Because data is read from a spreadsheet, a tester can add a row — different product, quantity, discount or date — and it becomes a new automated test.
+    </div>
+  </section>
+
+  <!-- 05 ARCHITECTURE -->
+  <section id="arch">
+    <span class="sec-num">05 — Architecture</span>
+    <h2>How it works under the hood</h2>
+    <p>The framework is built in clear layers so that each part has one job and can be maintained independently. This is what makes it reliable and easy to extend.</p>
+    <div class="arch">
+      <div class="layer"><div class="lname">Test data</div><div class="lbody"><span class="pill hi">Excel spreadsheet</span><span class="pill">one row = one scenario</span></div></div>
+      <div class="arrow">↓ feeds</div>
+      <div class="layer"><div class="lname">Test scenarios</div><div class="lbody"><span class="pill hi">Amendment flow</span><span class="pill">Quote flows</span><span class="pill">Bundle flow</span></div></div>
+      <div class="arrow">↓ orchestrated by</div>
+      <div class="layer"><div class="lname">Page Object Manager</div><div class="lbody"><span class="pill">single entry point to every screen &amp; helper</span></div></div>
+      <div class="arrow">↓ uses</div>
+      <div class="layer"><div class="lname">Page objects &amp; utilities (reusable)</div><div class="lbody"><span class="pill">Login</span><span class="pill">Quote Editor</span><span class="pill">Contract</span><span class="pill">Amendment</span><span class="pill hi">Assertions</span><span class="pill hi">Logger</span><span class="pill hi">Excel reader</span></div></div>
+      <div class="arrow">↓ talks to</div>
+      <div class="layer sf"><div class="lname">Salesforce CPQ</div><div class="lbody"><span class="pill">REST API — fast data setup</span><span class="pill">Browser UI — real CPQ screens</span></div></div>
+    </div>
+
+    <h3>The "hybrid" approach — and why it's smart</h3>
+    <p>Driving every single step through the browser would be slow and fragile. Instead, the framework uses two channels:</p>
+    <ul>
+      <li><strong>API channel</strong> for plumbing — creating the Account, Contact, Opportunity and base Quote, setting quantities and discounts, activating orders. This is fast and stable.</li>
+      <li><strong>UI (browser) channel</strong> for the parts that genuinely must be tested through the interface — the Quote Line Editor, the "Amend" buttons, the pricing calculation. This is where real user experience is validated.</li>
+    </ul>
+    <p>The result is a suite that is both <strong>fast</strong> and <strong>realistic</strong> — it doesn't waste minutes clicking through forms that an API can fill in seconds, but it never skips the screens a customer actually uses.</p>
+
+    <h3>Login once, test many</h3>
+    <p>Logging into Salesforce on every test would waste time and hammer the login service. The framework authenticates <strong>once</strong> at the start of a run, saves that session, and every test reuses it. Authentication uses a secure server-to-server method (JWT) — no passwords are stored in the tests.</p>
+  </section>
+
+  <!-- 06 AMENDMENT -->
+  <section id="amendment">
+    <span class="sec-num">06 — Walkthrough</span>
+    <h2>The amendment journey, step by step</h2>
+    <p>This is the flagship scenario. Tags show whether each step runs via the fast API channel or the real browser UI.</p>
+    <div class="steps">
+      <div class="step"><span class="st">Create the customer &amp; quote <span class="mode api">API</span></span><span class="sd">An Account, Contact, Opportunity and base Quote are created instantly via the API.</span></div>
+      <div class="step"><span class="st">Add a product on the Quote screen <span class="mode ui">UI</span></span><span class="sd">The Quote Line Editor is opened in the browser, a product is added and prices are calculated — exactly as a salesperson would.</span></div>
+      <div class="step"><span class="st">Set the original quantity &amp; discount <span class="mode api">API</span></span><span class="sd">Starting quantity and an in-policy discount are applied.</span></div>
+      <div class="step"><span class="st">Win the deal → Order → Contract <span class="mode api">API</span></span><span class="sd">The opportunity is closed-won, an order is created and activated, and a contract is generated. The framework waits for Salesforce to finish before continuing.</span></div>
+      <div class="step"><span class="st">Open the contract and click "Amend" <span class="mode ui">UI</span></span><span class="sd">The amendment is started through the real Salesforce screens, which produces a brand-new Amendment Quote.</span></div>
+      <div class="step"><span class="st">Change the quantity and start date <span class="mode api">API</span></span><span class="sd">The amendment quote is updated — for example, quantity goes from 1 to 7, with a new start date — then re-priced.</span></div>
+      <div class="step"><span class="st">Verify the amendment is correct <span class="mode api">API</span></span><span class="sd">The framework reads the data back from Salesforce and asserts the quantity and start date are exactly what was requested.</span></div>
+      <div class="step"><span class="st">Order &amp; contract the amendment <span class="mode api">API</span></span><span class="sd">The amended quote becomes an amended order, is activated, and generates a new amended contract.</span></div>
+      <div class="step"><span class="st">Final verification <span class="mode api">API</span></span><span class="sd">The amended contract's start date is checked. Only if every assertion passes is the test marked green.</span></div>
+    </div>
+    <div class="note">
+      <span class="tag">The important part</span>
+      Notice the two explicit <strong>verify</strong> steps. The test doesn't just "do" the journey — it independently confirms Salesforce stored the right numbers. That is the difference between a script and a real test.
+    </div>
+  </section>
+
+  <!-- 07 CAPABILITIES -->
+  <section id="capabilities">
+    <span class="sec-num">07 — Capabilities</span>
+    <h2>What's built into the framework</h2>
+    <p>These are the engineering features that make the suite trustworthy and maintainable.</p>
+    <table>
+      <thead><tr><th>Capability</th><th>What it means for you</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Data-driven (Excel)</strong></td><td>Scenarios are defined in a spreadsheet. Add a row → get a new test. A toggle column turns cases on or off without touching code.</td></tr>
+        <tr><td><strong>Built-in assertions</strong></td><td>Every run verifies real Salesforce data — quantities, dates, and that records were actually created.</td></tr>
+        <tr><td><strong>Login once</strong></td><td>One secure login per run, reused by all tests. Faster and gentler on Salesforce.</td></tr>
+        <tr><td><strong>Parallel execution</strong></td><td>Many tests run at the same time. The suite is designed to scale to 100+ scenarios in a single run.</td></tr>
+        <tr><td><strong>Reusable components</strong></td><td>Common actions, assertions, data reading and logging live in shared modules — fix once, benefit everywhere.</td></tr>
+        <tr><td><strong>HTML / JSON / JUnit reports</strong></td><td>A readable report for people, plus machine formats for CI dashboards.</td></tr>
+        <tr><td><strong>Timestamped logs</strong></td><td>Every run writes its own log folder, so you can trace exactly what happened and when.</td></tr>
+        <tr><td><strong>Failure evidence</strong></td><td>Screenshots, video and a trace are captured automatically when a test fails.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 08 RUN -->
+  <section id="run">
+    <span class="sec-num">08 — Operating Guide</span>
+    <h2>How to run it</h2>
+    <p>For the technical team. Anyone with Node.js installed and Salesforce credentials can run the suite.</p>
+
+    <h4>One-time setup</h4>
+<pre><span class="c"># install dependencies and the browser</span>
+npm install
+npx playwright install chromium
+
+<span class="c"># copy the sample config and fill in your Salesforce details</span>
+cp .env.example .env
+
+<span class="c"># generate the sample test-data spreadsheet</span>
+npm run data</pre>
+
+    <h4>Everyday commands</h4>
+<pre><span class="k">npm test</span>              <span class="c"># run everything, headless &amp; in parallel</span>
+<span class="k">npm run test:headed</span>   <span class="c"># watch it run in a visible browser (great for demos)</span>
+<span class="k">npm run test:amendment</span><span class="c"># run only the amendment journey</span>
+<span class="k">npm run report</span>        <span class="c"># open the HTML report from the last run</span></pre>
+
+    <div class="note warn">
+      <span class="tag">Credentials stay private</span>
+      Salesforce keys and the connection file (<code>.env</code>) are never committed to source control. The framework authenticates with a key-based method, so no human password lives in the project.
+    </div>
+  </section>
+
+  <!-- 09 REPORTS -->
+  <section id="reports">
+    <span class="sec-num">09 — Results</span>
+    <h2>What you see after a run</h2>
+    <p>Two things every stakeholder cares about: did it pass, and if not, why.</p>
+    <h4>The HTML report</h4>
+    <p>An interactive report lists every scenario as <strong>pass</strong> or <strong>fail</strong>. Open any test to see its journey broken into named steps — "Create quote", "Start amendment", "Verify quantity" — each individually marked. The verification steps show the exact expected-vs-actual values, so a failure tells you precisely what Salesforce got wrong.</p>
+    <h4>Evidence on failure</h4>
+    <p>When something fails, the framework automatically attaches a screenshot at the moment of failure, a video of the run, and a trace you can step through. No need to reproduce the issue by hand.</p>
+    <h4>Logs</h4>
+    <p>Each run creates a dated folder under <code>logs/</code> containing a full activity log and a separate error log — useful for audits and for debugging environment issues.</p>
+    <h4>For dashboards</h4>
+    <p>JSON and JUnit report files are also produced, so results can plug straight into a CI/CD pipeline or a quality dashboard.</p>
+  </section>
+
+  <!-- 10 QUALITY -->
+  <section id="quality">
+    <span class="sec-num">10 — Engineering Quality</span>
+    <h2>Why it stays maintainable as it grows</h2>
+    <p>A test suite is only valuable if the team keeps it green and keeps adding to it. Several deliberate choices protect that:</p>
+    <ul>
+      <li><strong>Page Object Model.</strong> Each Salesforce screen has one dedicated module holding its locators and actions. If Salesforce changes a button, it's fixed in exactly one place.</li>
+      <li><strong>Shared base &amp; utilities.</strong> Common waits, navigation, assertions, data and logging are centralised — no copy-pasted logic drifting out of sync.</li>
+      <li><strong>Configuration, not hard-coding.</strong> URLs, timeouts, parallelism and demo-vs-CI mode are controlled by simple environment settings.</li>
+      <li><strong>Resilience to timing.</strong> Salesforce processes some steps asynchronously; the framework politely waits and retries rather than failing on slow responses.</li>
+      <li><strong>Clean dependencies.</strong> Only the libraries actually used are kept, reducing security surface and install time.</li>
+    </ul>
+    <h3>Scaling to 100 scenarios</h3>
+    <p>To grow coverage, a tester adds rows to the data spreadsheet and runs the suite with more parallel workers. No new code is required for new data combinations. New <em>types</em> of journey (e.g. renewals, cancellations) reuse the same building blocks already in place.</p>
+    <div class="note">
+      <span class="tag">Roadmap note</span>
+      The Quote and Bundle screen modules can be brought fully in line with the same structured pattern used by the Contract and Amendment modules — a small, well-defined next step that further improves consistency.
+    </div>
+  </section>
+
+  <!-- 11 GLOSSARY -->
+  <section id="glossary">
+    <span class="sec-num">11 — Reference</span>
+    <h2>Glossary for non-technical readers</h2>
+    <table>
+      <tbody>
+        <tr><td><strong>CPQ</strong></td><td>Configure, Price, Quote — the Salesforce module that builds priced quotes for customers.</td></tr>
+        <tr><td><strong>Quote</strong></td><td>A priced proposal of products for a customer.</td></tr>
+        <tr><td><strong>Quote Line Editor (QLE)</strong></td><td>The Salesforce screen where products and quantities are added to a quote.</td></tr>
+        <tr><td><strong>Opportunity</strong></td><td>A potential deal being tracked in the sales pipeline.</td></tr>
+        <tr><td><strong>Order</strong></td><td>A confirmed purchase, created once a deal is won.</td></tr>
+        <tr><td><strong>Contract</strong></td><td>The binding agreement generated from an activated order.</td></tr>
+        <tr><td><strong>Amendment</strong></td><td>A change to an existing contract — e.g. more licences or a new date — that produces an updated order and contract.</td></tr>
+        <tr><td><strong>Bundle</strong></td><td>A product made of selectable components (like a laptop with chosen CPU, RAM and storage).</td></tr>
+        <tr><td><strong>Assertion</strong></td><td>An automated check that confirms reality matches expectation; a failed assertion fails the test.</td></tr>
+        <tr><td><strong>API</strong></td><td>A fast, direct, behind-the-scenes way for software to talk to Salesforce without using the screens.</td></tr>
+        <tr><td><strong>Playwright</strong></td><td>The technology that drives the browser and runs the tests.</td></tr>
+        <tr><td><strong>Headless</strong></td><td>Running the browser invisibly in the background — faster, used for bulk runs.</td></tr>
+        <tr><td><strong>CI/CD</strong></td><td>Automated pipelines that build and test software on every change.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <div class="fline">Configure. Price. Quote. Amend. Verified — automatically.</div>
+    <div>Salesforce CPQ Test Automation · Project Handbook</div>
+  </footer>
+
+</div>
+
+<script>
+  // staggered reveal for sections as they scroll into view
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.style.animation='rise .7s cubic-bezier(.2,.7,.2,1) forwards';io.unobserve(e.target)}})},{threshold:.08});
+  document.querySelectorAll('section').forEach(s=>{s.style.opacity='0';s.style.transform='translateY(14px)';io.observe(s)});
+</script>
+</body>
+</html>
